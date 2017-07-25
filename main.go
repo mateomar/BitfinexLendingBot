@@ -17,7 +17,7 @@ var (
 	configFile  = flag.String("conf", "default.conf", "Configuration file")
 	updateLends = flag.Bool("updatelends", false, "Update lend offerings")
 	dryRun      = flag.Bool("dryrun", false, "Output strategy decisions without placing orders")
-	logToFile   = flag.Bool("logtofile", false, "Write log to file instead of stdout")
+	logToFile   = flag.Bool("logtofile", false, "Log lend history in coin's Log. Steps outputted to stdout")
 )
 
 // BotConfig ...
@@ -44,13 +44,27 @@ func init() {
 	flag.Parse()
 
 	if *logToFile {
-		f, err := os.OpenFile("blb.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		dsh, err := os.OpenFile("DASH.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			panic("error opening file: " + err.Error())
 		}
-
-		log.SetOutput(f)
+		eth, err := os.OpenFile("ETH.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			panic("error opening file: " + err.Error())
+		}
+		ltc, err := os.OpenFile("LTC.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			panic("error opening file: " + err.Error())
+		}
+		var file_names map[string]*ast.File
+		file_names = make(map[string]*ast.File)
+		file_name["dsh"] = dsh
+		file_name["eth"] = eth
+		file_name["ltc"] = ltc
 	}
+	
+					   
+}
 }
 
 func main() {
@@ -84,7 +98,7 @@ func main() {
 			" " + activeWallet + ")")
 
 		if *updateLends {
-			err = executeStrategy(conf, *dryRun)
+			err = executeStrategy(conf, *dryRun, file_name[activeWallet])
 			if err != nil {
 				log.Println("WARNING: Failed to execute strategy: " + err.Error())
 				continue
