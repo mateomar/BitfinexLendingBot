@@ -17,7 +17,7 @@ type StrategyConf struct {
 	CascadeBot CascadeBotConf
 }
 
-func executeStrategy(conf BotConfig, dryRun bool) (err error) {
+func executeStrategy(conf BotConfig, dryRun bool, coin) (err error) {
 	// Sanity check
 	if conf.API == nil {
 		return errors.New("Please initialize the API instance first")
@@ -25,9 +25,9 @@ func executeStrategy(conf BotConfig, dryRun bool) (err error) {
 
 	switch strings.ToLower(conf.Strategy.Active) {
 	case "marginbot":
-		return strategyMarginBot(conf, dryRun)
+		return strategyMarginBot(conf, dryRun, coin)
 	case "cascadebot":
-		return strategyCascadeBot(conf, dryRun)
+		return strategyCascadeBot(conf, dryRun, coin)
 	}
 
 	return errors.New("Undefined strategy")
